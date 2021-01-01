@@ -1,0 +1,104 @@
+[
+  {
+    "name": "redis",
+    "image": "redis",
+    "cpu": 128,
+    "memoryReservation": 256,
+    "essential": true,
+    "portMappings": [
+      {
+        "containerPort": 6379,
+        "hostPort": 6379
+      }
+    ],
+    "logConfiguration": {
+      "logDriver": "awslogs",
+      "options": {
+          "awslogs-group": "/ecs/myapp",
+          "awslogs-region": "ap-south-1",
+          "awslogs-stream-prefix": "ecs"
+      }
+  }
+  },
+  {
+    "name": "zookeeper",
+    "image": "wurstmeister/zookeeper",
+    "cpu": 128,
+    "memoryReservation": 128,
+    "essential": false,
+    "portMappings": [
+      {
+        "containerPort": 2181,
+        "hostPort": 2181
+      }
+    ],
+    "logConfiguration": {
+      "logDriver": "awslogs",
+      "options": {
+          "awslogs-group": "/ecs/myapp",
+          "awslogs-region": "ap-south-1",
+          "awslogs-stream-prefix": "ecs"
+      }
+  }
+  },
+
+  {
+    "name": "kafka",
+    "image": "wurstmeister/kafka",
+    "cpu": 128,
+    "memoryReservation": 512,
+    "essential": false,
+    "portMappings": [
+      {
+        "containerPort": 9092,
+        "hostPort": 9092
+      }
+    ],
+    "environment": [
+        {
+          "name": "KAFKA_ADVERTISED_HOST_NAME",
+          "value": "localhost"
+        },
+        {
+          "name": "KAFKA_ZOOKEEPER_CONNECT",
+          "value": "localhost"
+        }
+      ],
+      "dependsOn": [
+        {
+            "containerName": "zookeeper",
+            "condition": "START"
+        }
+    ],
+    "logConfiguration": {
+      "logDriver": "awslogs",
+      "options": {
+          "awslogs-group": "/ecs/myapp",
+          "awslogs-region": "ap-south-1",
+          "awslogs-stream-prefix": "ecs"
+      }
+  }
+  },
+
+  {
+    "name": "web",
+    "image": "kvishe/assignment",
+    "cpu": 128,
+    "memoryReservation": 128,
+    "essential": false,
+    "portMappings": [
+      {
+        "containerPort": 8080,
+        "hostPort": 8080
+      }
+    ],
+    "logConfiguration": {
+      "logDriver": "awslogs",
+      "options": {
+          "awslogs-group": "/ecs/myapp",
+          "awslogs-region": "ap-south-1",
+          "awslogs-stream-prefix": "ecs"
+      }
+  }
+}
+]
